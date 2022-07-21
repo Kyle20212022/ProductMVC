@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductMVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,33 +13,38 @@ namespace ProductMVC.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        // GET: api/<ProductController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly NorthwindContext _northwindContext;
+        public ProductController(NorthwindContext northwindContext)
         {
-            return new string[] { "value1", "value2" };
+            _northwindContext = northwindContext;
         }
 
-        // GET api/<ProductController>/5
+        [HttpGet]
+        public IEnumerable<Product> Get()
+        {
+            return _northwindContext.Products.ToList();
+        }
+
+        
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<ProductController>
+        
         [HttpPost]
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/<ProductController>/5
+        
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<ProductController>/5
+        
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
