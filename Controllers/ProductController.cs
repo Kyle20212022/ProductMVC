@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProductMVC.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly NorthwindContext _northwindContext;
@@ -20,34 +19,38 @@ namespace ProductMVC.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Product> Get()
+        public IActionResult Index()
         {
-            return _northwindContext.Products.ToList();
+            return View();
         }
 
-        
-        [HttpGet("{id}")]
-        public string Get(int id)
+
+        [HttpGet("List")]
+        public Task<JsonResult> List()
         {
-            return "value";
+            return Json(_northwindContext.Products.ToList());
         }
 
-        
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpDelete("bom/{id}")]
+        public  Task<JsonResult> bom(string id)
         {
+            var product = _northwindContext.Products.Find(id);
+            if (product.UnitsInStock>0)
+            {
+                int UnitsInStock = Int32.Parse(product.UnitsInStock);
+                UnitsInStock -= 1;
+                product.UnitsInStock = UnitsInStock.ToString();
+                _northwindContext.Update(product);
+                _northwindContext.SaveChanges();
+                return Json("成功!");
+            }
+            else
+            {
+                return Json("需要採購!");
+            }
+                        
+            
         }
 
-        
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
